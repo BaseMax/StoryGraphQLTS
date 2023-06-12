@@ -236,4 +236,396 @@ Deletes a story created by the user.
 
 Please note that the above GraphQL operations and types provide a high-level overview of the API functionality. The actual implementation may require additional fields, arguments, or validation logic based on your specific project requirements.
 
+### Query: Login
+
+Allows users to authenticate and obtain a user token.
+
+**Input:**
+
+```graphql
+query {
+  login(email: "example@example.com", password: "password123") {
+    token
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "login": {
+      "token": "<user_token>"
+    }
+  }
+}
+```
+
+### Query: GetGuestToken
+
+Returns a UUID token for guest users.
+
+**Input:**
+
+```graphql
+query {
+  getGuestToken {
+    token
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "getGuestToken": {
+      "token": "<guest_token>"
+    }
+  }
+}
+```
+
+### Query: AuthAndCheckGuestToken
+
+Verifies the validity of a guest token.
+
+**Input:**
+
+```graphql
+query {
+  authAndCheckGuestToken(token: "<guest_token>") {
+    isValid
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "authAndCheckGuestToken": {
+      "isValid": true
+    }
+  }
+}
+```
+
+### Query: GetStories
+
+Retrieves a list of stories based on the user's role.
+
+**Input:**
+
+```graphql
+query {
+  getStories {
+    id
+    creatorUserId
+    type
+    storyName
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "getStories": [
+      {
+        "id": "<story_id_1>",
+        "creatorUserId": "<user_id>",
+        "type": "subscribed",
+        "storyName": "Story 1",
+        "createdAt": "<created_at_1>",
+        "updatedAt": "<updated_at_1>"
+      },
+      {
+        "id": "<story_id_2>",
+        "creatorUserId": "<user_id>",
+        "type": "timed",
+        "storyName": "Story 2",
+        "createdAt": "<created_at_2>",
+        "updatedAt": "<updated_at_2>"
+      },
+      ...
+    ]
+  }
+}
+```
+
+### Query: GetTimedStories
+
+Retrieves a list of timed stories based on the user's role.
+
+**Input:**
+
+```graphql
+query {
+  getTimedStories {
+    id
+    creatorUserId
+    type
+    storyName
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "getTimedStories": [
+      {
+        "id": "<timed_story_id_1>",
+        "creatorUserId": "<user_id>",
+        "type": "timed",
+        "storyName": "Timed Story 1",
+        "createdAt": "<timed_created_at_1>",
+        "updatedAt": "<timed_updated_at_1>"
+      },
+      {
+        "id": "<timed_story_id_2>",
+        "creatorUserId": "<user_id>",
+        "type": "timed",
+        "storyName": "Timed Story 2",
+        "createdAt": "<timed_created_at_2>",
+        "updatedAt": "<timed_updated_at_2>"
+      },
+      ...
+    ]
+  }
+}
+```
+
+### Query: GetSubscribedStories
+
+Retrieves a list of subscribed stories based on the user's role.
+
+**Input:**
+
+```graphql
+query {
+  getSubscribedStories {
+    id
+    creatorUserId
+    type
+    storyName
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:
+**
+```json
+{
+  "data": {
+    "getSubscribedStories": [
+      {
+        "id": "<subscribed_story_id_1>",
+        "creatorUserId": "<user_id>",
+        "type": "subscribed",
+        "storyName": "Subscribed Story 1",
+        "createdAt": "<subscribed_created_at_1>",
+        "updatedAt": "<subscribed_updated_at_1>"
+      },
+      {
+        "id": "<subscribed_story_id_2>",
+        "creatorUserId": "<user_id>",
+        "type": "subscribed",
+        "storyName": "Subscribed Story 2",
+        "createdAt": "<subscribed_created_at_2>",
+        "updatedAt": "<subscribed_updated_at_2>"
+      },
+      ...
+    ]
+  }
+}
+```
+
+### Query: GetStory
+
+Retrieves the details of a specific story.
+
+**Input:**
+
+```graphql
+query {
+  getStory(storyId: "<story_id>") {
+    id
+    creatorUserId
+    type
+    storyName
+    backgroundColor
+    backgroundImage
+    isShareable
+    attachedFile
+    externalWebLink
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "getStory": {
+      "id": "<story_id>",
+      "creatorUserId": "<user_id>",
+      "type": "subscribed",
+      "storyName": "Story 1",
+      "backgroundColor": "#ffffff",
+      "backgroundImage": "https://example.com/image.jpg",
+      "isShareable": true,
+      "attachedFile": "https://example.com/file.pdf",
+      "externalWebLink": "https://example.com",
+      "createdAt": "<created_at>",
+      "updatedAt": "<updated_at>"
+    }
+  }
+}
+```
+
+### Mutation: CreateStory
+
+Creates a new story.
+
+**Input:**
+
+```graphql
+mutation {
+  createStory(input: {
+    creatorUserId: "<user_id>",
+    type: "timed",
+    fromDate: "2023-06-15T00:00:00Z",
+    fromTime: "09:00:00",
+    toDate: "2023-06-16T00:00:00Z",
+    toTime: "18:00:00",
+    storyName: "New Story",
+    backgroundColor: "#ff0000",
+    backgroundImage: "https://example.com/image.jpg",
+    isShareable: true,
+    attachedFile: "https://example.com/file.pdf",
+    externalWebLink: "https://example.com"
+  }) {
+    id
+    creatorUserId
+    type
+    storyName
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "createStory": {
+      "id": "<new_story_id>",
+      "creatorUserId": "<user_id>",
+      "type": "timed",
+      "storyName": "New Story",
+      "createdAt": "<created_at>",
+      "updatedAt": "<updated_at>"
+    }
+  }
+}
+```
+
+### Mutation: EditStory
+
+Edits an existing story.
+
+**Input:**
+
+```graphql
+mutation {
+  editStory(input: {
+    storyId: "<story_id>",
+    creatorUserId: "<user_id>",
+    type: "subscribed",
+    storyName: "Updated Story",
+    backgroundColor: "#00ff00",
+    backgroundImage: "https://example.com/new_image.jpg",
+    isShareable: false,
+    attachedFile: "https://example.com/new_file.pdf",
+    externalWebLink: "https://example.com/new_link"
+  }) {
+    id
+    creatorUserId
+    type
+    storyName
+    createdAt
+    updatedAt
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "editStory": {
+      "id": "<story_id>",
+      "creatorUserId": "<user_id>",
+      "type": "subscribed",
+      "storyName": "Updated Story",
+      "createdAt": "<created_at>",
+      "updatedAt": "<updated_at>"
+    }
+  }
+}
+```
+
+### Mutation: DeleteStory
+
+Deletes a specific story.
+
+**Input:**
+
+```graphql
+mutation {
+  deleteStory(storyId: "<story_id>", userId: "<user_id>") {
+    id
+    creatorUserId
+    storyName
+  }
+}
+```
+
+**Output:**
+
+```json
+{
+  "data": {
+    "deleteStory": {
+      "id": "<story_id>",
+      "creatorUserId": "<user_id>",
+      "storyName": "Deleted Story"
+    }
+  }
+}
+```
+
+Please note that the <user_id>, <guest_token>, <story_id>, and other placeholders should be replaced with actual values specific to your application.
+
 Copyright 2023, Max Base
