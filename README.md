@@ -466,6 +466,10 @@ query {
   getStory(storyId: "<story_id>") {
     id
     creatorUserId
+    creator {
+      id
+      name
+    }
     type
     storyName
     backgroundColor
@@ -510,7 +514,6 @@ Creates a new story.
 ```graphql
 mutation {
   createStory(input: {
-    creatorUserId: "<user_id>",
     type: "timed",
     fromDate: "2023-06-15T00:00:00Z",
     fromTime: "09:00:00",
@@ -560,7 +563,6 @@ Edits an existing story.
 mutation {
   editStory(input: {
     storyId: "<story_id>",
-    creatorUserId: "<user_id>",
     type: "subscribed",
     storyName: "Updated Story",
     backgroundColor: "#00ff00",
