@@ -82,4 +82,163 @@ This project is a GraphQL-based API powered by NestJS and implemented in TypeScr
 - user_id
 - datetime
 
+## GraphQL Operations - Queries
+
+### Login
+
+Allows users to authenticate and obtain a user token.
+
+**Input:**
+
+- email (string)
+- password (string)
+
+**Output:**
+
+token (string)
+
+### GetGuestToken
+
+Returns a UUID token for guest users.
+
+**Output:**
+
+token (string)
+
+### AuthAndCheckGuestToken
+
+Verifies the validity of a guest token.
+
+**Input:**
+
+token (string)
+
+**Output:**
+
+isValid (boolean)
+
+### GetStories
+
+Retrieves a list of stories based on the user's role.
+
+**Output:**
+
+stories (array of Story objects)
+
+### GetTimedStories
+
+Retrieves a list of timed stories based on the user's role.
+
+**Output:**
+
+timedStories (array of Story objects)
+
+### GetSubscribedStories
+
+Retrieves a list of subscribed stories based on the user's role.
+
+**Output:**
+
+subscribedStories (array of Story objects)
+
+### GetStory
+Retrieves the details of a specific story based on the user's role.
+
+**Input:**
+
+storyId (string)
+
+**Output:**
+
+- story (Story object)
+
+### Mutations
+
+#### Register
+
+Enables user registration.
+
+**Input:**
+
+- name (string)
+- email (string)
+- password (string)
+
+**Output:**
+
+user (User object)
+
+### DeleteAccount
+
+Deactivates a user account and keeps a record of the deletion.
+
+**Output:**
+
+success (boolean)
+
+### ScanStory
+Scans a story for a guest user.
+
+**Input:**
+
+- storyId (string)
+- token (string)
+
+**Output:**
+
+success (boolean)
+
+### Types
+
+**User**
+- id (string)
+- name (string)
+- email (string)
+- password (string)
+
+**GuestUser**
+
+- id (string)
+- token (string)
+- versionNumber (int)
+- operationSystem (string)
+- userAgent (string)
+- displayDetails (string)
+- createdAt (datetime)
+
+**Story**
+
+- id (string)
+- creatorUserId (string)
+- type (string, values: "timed", "subscribed")
+- fromDate (datetime, nullable, applicable only for timed stories)
+- fromTime (datetime, nullable, applicable only for timed stories)
+- toDate (datetime, nullable, applicable only for timed stories)
+- toTime (datetime, nullable, applicable only for timed stories)
+- storyName (string, required)
+- backgroundColor (string, hex or rgb)
+- backgroundImage (string, link to an image)
+- isShareable (boolean, default: true)
+- attachedFile (string, nullable)
+- externalWebLink (string, nullable)
+- createdAt (datetime)
+- updatedAt (datetime, nullable)
+
+**UserScanned**
+
+- id (string)
+- userId (string)
+- storyId (string)
+- datetime (datetime)
+- DeleteUserAccount
+- id (string)
+- userId (string)
+- datetime (datetime)
+
+**DeleteGuestAccount**
+
+- id (string)
+- userId (string)
+- datetime (datetime)
+
 Copyright 2023, Max Base
