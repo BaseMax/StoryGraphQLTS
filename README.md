@@ -626,6 +626,153 @@ mutation {
 }
 ```
 
-Please note that the <user_id>, <guest_token>, <story_id>, and other placeholders should be replaced with actual values specific to your application.
+Please note that the `<user_id>`, `<guest_token>`, `<story_id>`, and other placeholders should be replaced with actual values specific to your application.
+
+These are just a few examples of how you can write tests for your GraphQL-based project powered by NestJS and TypeScript. Depending on your specific requirements, you can write additional tests to cover different scenarios and ensure the quality and reliability of your codebase.
+
+Remember to run your tests regularly as part of your development process to catch any issues early and maintain a stable and bug-free GraphQL API.
+
+## Testing
+
+Testing is an essential part of ensuring the functionality and reliability of your GraphQL API. NestJS provides a robust testing framework that allows you to write unit tests, integration tests, and end-to-end tests for your GraphQL resolvers and modules.
+
+### Unit Testing
+
+Unit tests focus on testing individual components, such as resolvers and services, in isolation. These tests verify that each component behaves as expected and handles different scenarios correctly.
+
+To write unit tests for your GraphQL resolvers, you can use tools like Jest, which is a popular testing framework supported by NestJS.
+
+Example unit test for a resolver:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { MyResolver } from './my.resolver';
+import { MyService } from './my.service';
+
+describe('MyResolver', () => {
+  let resolver: MyResolver;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [MyResolver, MyService],
+    }).compile();
+
+    resolver = module.get<MyResolver>(MyResolver);
+  });
+
+  it('should return a greeting message', () => {
+    const result = resolver.getGreeting();
+    expect(result).toEqual('Hello, World!');
+  });
+});
+```
+
+### Integration Testing
+
+Integration tests focus on testing the interactions between different components of your application, such as resolvers, services, and the database. These tests ensure that the components work together correctly and handle real-world scenarios.
+
+To write integration tests for your GraphQL API, you can use tools like Supertest to send HTTP requests to your API endpoints and assert the responses.
+
+Example integration test for a GraphQL mutation:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../src/app.module';
+
+describe('AppController (e2e)', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  it('/graphql (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `mutation {
+          createUser(name: "John Doe", email: "johndoe@example.com", password: "password123") {
+            id
+            name
+            email
+          }
+        }`,
+      })
+      .expect(200)
+      .expect((res) => {
+        const { body } = res;
+        expect(body.data.createUser).toHaveProperty('id');
+        expect(body.data.createUser).toHaveProperty('name', 'John Doe');
+        expect(body.data.createUser).toHaveProperty('email', 'johndoe@example.com');
+      });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});
+```
+
+### End-to-End Testing
+
+End-to-end (E2E) tests simulate the complete workflow of your application, including sending requests to your GraphQL API and verifying the actual results against expected outcomes. These tests ensure that your API functions correctly from the client's perspective.
+
+To write end-to-end tests for your GraphQL API, you can use tools like Jest and a GraphQL client library, such as Apollo Client, to send requests and assert the responses.
+
+Example end-to-end test for a GraphQL query:
+
+```typescript
+import { ApolloServer } from 'apollo-server-express';
+import { createTestClient } from 'apollo-server-integration-testing';
+import { gql } from 'apollo-server-core';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+
+describe('App (e2e)', () => {
+  let apolloServer: ApolloServer;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    apolloServer = moduleFixture.get<ApolloServer>(ApolloServer);
+  });
+
+  it('should return a list of users', async () => {
+    const { query } = createTestClient({
+      apolloServer,
+    });
+
+    const GET_USERS_QUERY = gql`
+      query {
+        users {
+          id
+          name
+          email
+        }
+      }
+    `;
+
+    const { data } = await query({ query: GET_USERS_QUERY });
+
+    expect(data.users).toHaveLength(2);
+    expect(data.users[0]).toHaveProperty('id');
+    expect(data.users[0]).toHaveProperty('name');
+    expect(data.users[0]).toHaveProperty('email');
+  });
+});
+```
+
+These are just a few examples of how you can write tests for your GraphQL-based project powered by NestJS and TypeScript. Depending on your specific requirements, you can write additional tests to cover different scenarios and ensure the quality and reliability of your codebase.
+
+Remember to run your tests regularly as part of your development process to catch any issues early and maintain a stable and bug-free GraphQL API.
 
 Copyright 2023, Max Base
