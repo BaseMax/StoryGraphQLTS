@@ -1,5 +1,7 @@
 # Story GraphQL TS
 
+# Project Name
+
 ## Description
 
 This project is a GraphQL-based API powered by NestJS and implemented in TypeScript. It provides various features for user authentication, user management, and story-related operations. The API supports both user and guest user roles, each with specific permissions and functionality.
@@ -25,131 +27,74 @@ This project is a GraphQL-based API powered by NestJS and implemented in TypeScr
   - This route is available to both user roles.
 - **Scan Story:** Scans a story for a guest user:
   - This route is only available to guest users.
+- **Create New Story:** Creates a new story:
+  - This route is only available to users.
+- **Edit Story:** Edits an existing story:
+  - This route is only available to users.
+- **Delete My Story:** Deletes a story created by the user:
+  - This route is only available to users.
 
-## Models
+## GraphQL Operations
 
-### User
+### Queries
 
-- id
-- name
-- email
-- password
-
-### GuestUser
-
-- id (auto-increment)
-- token (indexed key and unique)
-- versionNumber (int)
-- operation system (string)
-- user agent (string)
-- display details (string)
-- created at (datetime)
-
-### Story
-
-- id (auto-increment)
-- creator user id
-- type (timed, subscribed)
-- from_date (nullable, applicable only for timed stories)
-- from_time (nullable, applicable only for timed stories)
-- to_date (nullable, applicable only for timed stories)
-- to_time (nullable, applicable only for timed stories)
-- story_name (required)
-- background_color (string of hex or rgb)
-- background_image (link to an image)
-- is_shareable (default: true)
-- attached_file (nullable)
-- external_web_link (nullable)
-- created_at (datetime)
-- updated_at (nullable)
-
-### User_Scanned
-
-- id
-- user id
-- story id
-- datetime
-
-### DeleteUserAccount
-
-- id
-- user_id
-- datetime
-
-### DeleteGuestAccount
-
-- id
-- user_id
-- datetime
-
-## GraphQL Operations - Queries
-
-### Login
+#### Login
 
 Allows users to authenticate and obtain a user token.
 
 **Input:**
-
 - email (string)
 - password (string)
 
 **Output:**
+- token (string)
 
-token (string)
-
-### GetGuestToken
+#### GetGuestToken
 
 Returns a UUID token for guest users.
 
 **Output:**
+- token (string)
 
-token (string)
-
-### AuthAndCheckGuestToken
+#### AuthAndCheckGuestToken
 
 Verifies the validity of a guest token.
 
 **Input:**
-
-token (string)
+- token (string)
 
 **Output:**
+- isValid (boolean)
 
-isValid (boolean)
-
-### GetStories
+#### GetStories
 
 Retrieves a list of stories based on the user's role.
 
 **Output:**
+- stories (array of Story objects)
 
-stories (array of Story objects)
-
-### GetTimedStories
+#### GetTimedStories
 
 Retrieves a list of timed stories based on the user's role.
 
 **Output:**
+- timedStories (array of Story objects)
 
-timedStories (array of Story objects)
-
-### GetSubscribedStories
+#### GetSubscribedStories
 
 Retrieves a list of subscribed stories based on the user's role.
 
 **Output:**
+- subscribedStories (array of Story objects)
 
-subscribedStories (array of Story objects)
+#### GetStory
 
-### GetStory
 Retrieves the details of a specific story based on the user's role.
 
 **Input:**
-
-storyId (string)
+- storyId (string)
 
 **Output:**
-
 - story (Story object)
 
 ### Mutations
@@ -159,44 +104,94 @@ storyId (string)
 Enables user registration.
 
 **Input:**
-
 - name (string)
 - email (string)
 - password (string)
 
 **Output:**
+- user (User object)
 
-user (User object)
-
-### DeleteAccount
+#### DeleteAccount
 
 Deactivates a user account and keeps a record of the deletion.
 
 **Output:**
+- success (boolean)
 
-success (boolean)
+#### ScanStory
 
-### ScanStory
 Scans a story for a guest user.
 
 **Input:**
-
 - storyId (string)
 - token (string)
 
 **Output:**
+- success (boolean)
 
-success (boolean)
+#### CreateStory
+
+Creates a new story.
+
+**Input:**
+- creatorUserId (string)
+- type (string, values: "timed", "subscribed")
+- fromDate (datetime, nullable, applicable only for timed stories)
+- fromTime (datetime, nullable, applicable only for timed stories)
+- toDate (datetime, nullable, applicable only for timed stories)
+- toTime (datetime, nullable, applicable only for timed stories)
+- storyName (string, required)
+- backgroundColor (string, hex or rgb)
+- backgroundImage (string, link to an image)
+- isShareable (boolean, default: true)
+- attachedFile (string, nullable)
+- externalWebLink (string, nullable)
+
+**Output:**
+- story (Story object)
+
+#### EditStory
+
+Edits an existing story.
+
+**Input:**
+- storyId (string)
+- creatorUserId (string)
+- type (string, values: "timed", "subscribed")
+- fromDate (datetime, nullable, applicable only for timed stories)
+- fromTime (datetime, nullable, applicable only for timed stories)
+- toDate (datetime, nullable, applicable only for timed stories)
+- toTime (datetime, nullable, applicable only for timed stories)
+- storyName (string, required)
+- backgroundColor (string, hex or rgb)
+- backgroundImage (string, link to an image)
+- isShareable (boolean, default: true)
+- attachedFile (string, nullable)
+- externalWebLink (string, nullable)
+
+**Output:**
+- story (Story object)
+
+#### DeleteMyStory
+
+Deletes a story created by the user.
+
+**Input:**
+- storyId (string)
+
+**Output:**
+- success (boolean)
 
 ### Types
 
-**User**
+#### User
+
 - id (string)
 - name (string)
 - email (string)
 - password (string)
 
-**GuestUser**
+#### GuestUser
 
 - id (string)
 - token (string)
@@ -206,7 +201,7 @@ success (boolean)
 - displayDetails (string)
 - createdAt (datetime)
 
-**Story**
+#### Story
 
 - id (string)
 - creatorUserId (string)
@@ -224,21 +219,25 @@ success (boolean)
 - createdAt (datetime)
 - updatedAt (datetime, nullable)
 
-**UserScanned**
+#### UserScanned
 
 - id (string)
 - userId (string)
 - storyId (string)
 - datetime (datetime)
-- DeleteUserAccount
-- id (string)
-- userId (string)
-- datetime (datetime)
 
-**DeleteGuestAccount**
+#### DeleteUserAccount
 
 - id (string)
 - userId (string)
 - datetime (datetime)
+
+#### DeleteGuestAccount
+
+- id (string)
+- userId (string)
+- datetime (datetime)
+
+Please note that the above GraphQL operations and types provide a high-level overview of the API functionality. The actual implementation may require additional fields, arguments, or validation logic based on your specific project requirements.
 
 Copyright 2023, Max Base
