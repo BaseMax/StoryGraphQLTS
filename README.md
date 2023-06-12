@@ -1,9 +1,5 @@
 # Story GraphQL TS
 
-# Project Name
-
-## Description
-
 This project is a GraphQL-based API powered by NestJS and implemented in TypeScript. It provides various features for user authentication, user management, and story-related operations. The API supports both user and guest user roles, each with specific permissions and functionality.
 
 ## Main Features
