@@ -30,4 +30,4 @@ class User {
 const userSchema = SchemaFactory.createForClass(User);
 
 export default userSchema;
-export { UserDocument };
+export { UserDocument, User };

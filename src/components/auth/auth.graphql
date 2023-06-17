@@ -1,0 +1,32 @@
+type loginRes {
+  accessToken: String
+  message: String!
+}
+
+type registerRes {
+  id: ID
+  name: String
+  email: String
+  created: Boolean!
+  message: String!
+}
+
+input loginInput {
+  email: String
+  password: String
+}
+
+type Query {
+    _null: String
+}
+
+input registerInput {
+  name: String
+  email: String
+  password: String
+}
+
+type Mutation {
+  login(loginInput: loginInput!): loginRes!
+  register(registerInput: registerInput!): registerRes!
+}
