@@ -4,6 +4,7 @@ import { compareSync, hashSync } from "bcrypt";
 import { RegisterInput } from "./dto/register-auth.input";
 import { LoginInput } from "./dto/login-auth.input";
 import { JwtService } from "@nestjs/jwt";
+import { IResult } from "ua-parser-js";
 
 @Injectable()
 export class AuthService {
@@ -57,7 +58,7 @@ export class AuthService {
 
     const payload = {
       id: user._id,
-      isadmin: user.isadmin,
+      isGuest: false,
     };
     const accessToken = this.createJwt(payload);
 
@@ -65,5 +66,15 @@ export class AuthService {
       accessToken,
       message: "login is successful",
     };
+  }
+
+  public async getGuestToken(cInformation: IResult) {
+    const guestUser = await this.authRepo.createGuestUser(cInformation);
+    const payload = {
+      id: guestUser._id,
+      isGuest: false,
+    };
+    const accessToken = this.createJwt(payload);
+    return { accessToken };
   }
 }

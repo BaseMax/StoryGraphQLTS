@@ -11,13 +11,17 @@ type registerRes {
   message: String!
 }
 
+type getGuestTokenRes {
+  accessToken: String!
+}
+
 input loginInput {
   email: String
   password: String
 }
 
 type Query {
-    _null: String
+    getGuestToken: getGuestTokenRes!
 }
 
 input registerInput {

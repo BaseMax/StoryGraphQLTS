@@ -5,6 +5,7 @@ import AuthRepo from "./auth.repo";
 import { MongooseModule } from "@nestjs/mongoose";
 import userSchema, { User } from "src/models/user.model";
 import { JwtModule } from "@nestjs/jwt";
+import { GuestUser, guestUserSchema } from "src/models/guestUser.model";
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { JwtModule } from "@nestjs/jwt";
       {
         name: User.name,
         schema: userSchema,
+      },
+      {
+        name: GuestUser.name,
+        schema: guestUserSchema,
       },
     ]),
   ],

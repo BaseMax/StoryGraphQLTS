@@ -3,6 +3,12 @@ import type { HydratedDocument } from "mongoose";
 
 type UserDocument = HydratedDocument<User>;
 
+interface IuserSchema {
+  email: string;
+  password: string;
+  name: string;
+}
+
 @Schema({
   validateBeforeSave: false,
 })
@@ -30,4 +36,4 @@ class User {
 const userSchema = SchemaFactory.createForClass(User);
 
 export default userSchema;
-export { UserDocument, User };
+export { UserDocument, User, IuserSchema };

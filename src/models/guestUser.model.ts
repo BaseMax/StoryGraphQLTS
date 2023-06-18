@@ -33,6 +33,6 @@ class GuestUser {
   versionNumber: number;
 }
 
-const guestUserModel = SchemaFactory.createForClass(GuestUser);
+const guestUserSchema = SchemaFactory.createForClass(GuestUser);
 
-export { guestUserModel, GuestUser, `GuestUserDocument };
+export { guestUserSchema, GuestUser, GuestUserDocument };
