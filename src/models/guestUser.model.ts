@@ -1,5 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import type {
+  IBrowser,
+  ICPU,
+  IDevice,
+  IEngine,
+  IOS,
+  IResult,
+} from "ua-parser-js";
 
 type GuestUserDocument = HydratedDocument<GuestUser>;
 
@@ -9,28 +17,39 @@ type GuestUserDocument = HydratedDocument<GuestUser>;
 class GuestUser {
   @Prop({
     type: String,
+    required: true,
   })
-  token: string;
+  ua: string;
 
   @Prop({
-    type: String,
+    type: Object,
+    required: true,
   })
-  operationSystem: string;
+  browser: IBrowser;
 
   @Prop({
-    type: String,
+    type: Object,
+    required: true,
   })
-  userAgent: string;
+  device: IDevice;
 
   @Prop({
-    type: String,
+    type: Object,
+    required: true,
   })
-  displayDetails: string;
+  engine: IEngine;
 
   @Prop({
-    type: Number,
+    type: Object,
+    required: true,
   })
-  versionNumber: number;
+  os: IOS;
+
+  @Prop({
+    type: Object,
+    required: true,
+  })
+  cpu: ICPU;
 }
 
 const guestUserSchema = SchemaFactory.createForClass(GuestUser);

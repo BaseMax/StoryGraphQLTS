@@ -29,8 +29,6 @@ class AuthRepo {
 
   public async createGuestUser(cInformation: IResult) {
     const guestUser = await this.guestUserModel.create(cInformation);
-    console.log(guestUser);
-    
     return guestUser;
   }
 }
