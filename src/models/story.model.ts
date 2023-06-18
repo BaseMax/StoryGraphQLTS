@@ -5,6 +5,9 @@ type StoryDocument = HydratedDocument<Story>;
 
 @Schema({
   validateBeforeSave: false,
+  timestamps: {
+    createdAt: true,
+  },
 })
 class Story {
   @Prop({

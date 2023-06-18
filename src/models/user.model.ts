@@ -11,6 +11,9 @@ interface IuserSchema {
 
 @Schema({
   validateBeforeSave: false,
+  timestamps: {
+    createdAt: true,
+  },
 })
 class User {
   @Prop({

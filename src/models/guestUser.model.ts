@@ -13,6 +13,9 @@ type GuestUserDocument = HydratedDocument<GuestUser>;
 
 @Schema({
   validateBeforeSave: false,
+  timestamps: {
+    createdAt: true,
+  },
 })
 class GuestUser {
   @Prop({
