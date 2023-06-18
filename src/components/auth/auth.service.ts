@@ -72,9 +72,28 @@ export class AuthService {
     const guestUser = await this.authRepo.createGuestUser(cInformation);
     const payload = {
       id: guestUser._id,
-      isGuest: false,
+      isGuest: true,
     };
     const accessToken = this.createJwt(payload);
     return { accessToken };
+  }
+
+  public isvalidToken(t: string) {
+    return this.jwtService
+      .verifyAsync(t)
+      .then((decode) =>
+        !decode.isGuest
+          ? {
+              isvalid: false,
+            }
+          : {
+              isvalid: true,
+            },
+      )
+      .catch(() => {
+        return {
+          isvalid: false,
+        };
+      });
   }
 }

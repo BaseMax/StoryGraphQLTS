@@ -15,6 +15,10 @@ type getGuestTokenRes {
   accessToken: String!
 }
 
+type isvalidGuestTokenRes {
+  isvalid: Boolean!
+}
+
 input loginInput {
   email: String
   password: String
@@ -33,4 +37,5 @@ input registerInput {
 type Mutation {
   login(loginInput: loginInput!): loginRes!
   register(registerInput: registerInput!): registerRes!
+  isvalidGuestToken(token: String!): isvalidGuestTokenRes!
 }

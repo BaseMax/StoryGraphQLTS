@@ -14,6 +14,11 @@ export class AuthResolver {
     return await this.authService.getGuestToken(cInformation);
   }
 
+  @Mutation("isvalidGuestToken")
+  async isvalidGuestToken(@Args("token") token: string) {
+    return await this.authService.isvalidToken(token);
+  }
+
   @Mutation("login")
   async login(@Args("loginInput") loginInput: LoginInput) {
     return await this.authService.login(loginInput);
