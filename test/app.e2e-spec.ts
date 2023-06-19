@@ -38,4 +38,8 @@ describe("AppController (e2e)", () => {
     scanstoryModel = model("scanstories", new Schema({}, { strict: false }));
     await scanstoryModel.deleteMany({}).then(console.log);
   });
+
+  test("plus plus", () => {
+    expect(2 + 2).toBe(4);
+  });
 });
