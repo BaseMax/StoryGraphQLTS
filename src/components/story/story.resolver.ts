@@ -2,9 +2,12 @@ import { Resolver, Mutation, Args, Query } from "@nestjs/graphql";
 import { StoryService } from "./story.service";
 import { CreateStoryInput } from "./dto/create-story.input";
 import { UpdateStoryInput } from "./dto/update-story.input";
-import { GuestUserAccess, UserAccess } from "src/guards/accessStory.user.guard";
+import {
+  GuestUserAccess,
+  UserAccess,
+} from "../../guards/accessStory.user.guard";
 import { UseGuards } from "@nestjs/common";
-import User from "src/decorator/user.decorator";
+import User from "../../decorator/user.decorator";
 import { GetTimedStoriesInput } from "./dto/getTimeStories.input";
 
 @Resolver("Story")

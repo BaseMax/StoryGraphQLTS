@@ -3,9 +3,9 @@ import { AuthService } from "./auth.service";
 import { AuthResolver } from "./auth.resolver";
 import AuthRepo from "./auth.repo";
 import { MongooseModule } from "@nestjs/mongoose";
-import userSchema, { User } from "src/models/user.model";
+import userSchema, { User } from "../../models/user.model";
 import { JwtModule } from "@nestjs/jwt";
-import { GuestUser, guestUserSchema } from "src/models/guestUser.model";
+import { GuestUser, guestUserSchema } from "../../models/guestUser.model";
 
 @Module({
   imports: [

@@ -12,7 +12,7 @@ import { StoryModule } from "./components/story/story.module";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
-      typePaths: ["src/components/**/*.graphql"],
+      typePaths: ["./components/**/*.graphql"],
       sortSchema: true,
       context: ({ req }) => ({ req }),
       formatError: (error: GraphQLError) => {

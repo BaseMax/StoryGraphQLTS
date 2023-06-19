@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { GuestUser } from "src/models/guestUser.model";
+import { GuestUser } from "../../models/guestUser.model";
 import { IResult } from "ua-parser-js";
 import { IuserSchema, User } from "../../models/user.model";
 

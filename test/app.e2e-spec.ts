@@ -2,9 +2,19 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
+import { connect, Model, model, Schema } from "mongoose";
 
 describe("AppController (e2e)", () => {
+  // db models
+  let userModel: Model<any>;
+  let guestUserModel: Model<any>;
+  let storyModel: Model<any>;
+  let scanstoryModel: Model<any>;
+
+  // app
   let app: INestApplication;
+
+  const defaultUsers: any[] = [{}];
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -13,12 +23,19 @@ describe("AppController (e2e)", () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
 
-  it("/ (GET)", () => {
-    return request(app.getHttpServer())
-      .get("/")
-      .expect(200)
-      .expect("Hello World!");
+    await connect("mongodb://localhost:27017/maxstory");
+
+    userModel = model("users", new Schema({}, { strict: false }));
+    await userModel.deleteMany({});
+
+    guestUserModel = model("guestusers", new Schema({}, { strict: false }));
+    await guestUserModel.deleteMany({});
+
+    storyModel = model("stories", new Schema({}, { strict: false }));
+    await storyModel.deleteMany({});
+
+    scanstoryModel = model("scanstories", new Schema({}, { strict: false }));
+    await scanstoryModel.deleteMany({}).then(console.log);
   });
 });

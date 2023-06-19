@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { ScanStory } from "src/models/scanStory.model";
-import { Story } from "src/models/story.model";
+import { ScanStory } from "../../models/scanStory.model";
+import { Story } from "../../models/story.model";
 import { CreateStoryInput } from "./dto/create-story.input";
 import { GetTimedStoriesInput } from "./dto/getTimeStories.input";
 import { UpdateStoryInput } from "./dto/update-story.input";

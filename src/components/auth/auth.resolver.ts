@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
-import ClientInformation from "src/decorator/clientInformation.decorator";
+import ClientInformation from "../../decorator/clientInformation.decorator";
 import { IResult } from "ua-parser-js";
 import { AuthService } from "./auth.service";
 import { LoginInput } from "./dto/login-auth.input";

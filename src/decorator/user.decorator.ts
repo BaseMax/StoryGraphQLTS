@@ -4,8 +4,6 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
-import { UAParser } from "ua-parser-js";
-import type { IResult } from "ua-parser-js";
 import { JwtService } from "@nestjs/jwt";
 
 const jwt = new JwtService({ secret: process.env.JWT_SECRETKEY });
