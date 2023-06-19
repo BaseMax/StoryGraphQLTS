@@ -18,8 +18,11 @@ export class StoryResolver {
   @Mutation("createStory")
   async createStory(
     @Args("createStoryInput") createStoryInput: CreateStoryInput,
+    @User() user: { id: string; isGuest?: boolean },
   ) {
-    return await this.storyService.createStory(createStoryInput);
+    createStoryInput["creatorUserId"] = user.id;
+    const story = await this.storyService.createStory(createStoryInput);
+    return story;
   }
 
   @UseGuards(UserAccess)

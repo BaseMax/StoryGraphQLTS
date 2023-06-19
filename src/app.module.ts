@@ -17,12 +17,12 @@ import { StoryModule } from "./components/story/story.module";
       typePaths: ["src/components/**/*.graphql"],
       sortSchema: true,
       context: ({ req }) => ({ req }),
-      formatError: (error: GraphQLError) => {
-        const graphQLFormattedError: GraphQLFormattedError = {
-          errors: error.extensions.originalError,
-        } as any;
-        return graphQLFormattedError;
-      },
+      // formatError: (error: GraphQLError) => {
+      //   const graphQLFormattedError: GraphQLFormattedError = {
+      //     errors: error.extensions.originalError,
+      //   } as any;
+      //   return graphQLFormattedError;
+      // },
     }),
     AuthModule,
     StoryModule,

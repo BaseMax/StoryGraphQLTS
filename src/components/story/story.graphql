@@ -1,20 +1,20 @@
 type Story {
   creatorUserId: String!
-  type: String!
+  type: String! 
   fromDate: String!
   fromTime: String!
   toDate: String!
   toTime: String!
-  storyName: String!
+  storyName: String! 
   backgroundColor: String! 
-  backgroundImage: String!
+  backgroundImage: String! 
   isShareable: Boolean!
-  attachedFile: String!
-  externalWebLink: String!
+  attachedFile: String! 
+  externalWebLink: String! 
+  _id: ID!
 }
 
 input CreateStoryInput {
-  creatorUserId: String!
   type: String!
   fromDate: String!
   fromTime: String!
@@ -29,8 +29,7 @@ input CreateStoryInput {
 }
 
 input UpdateStoryInput {
-  id: Int!
-  creatorUserId: String!
+  storyId: ID!
   type: String!
   fromDate: String!
   fromTime: String!
@@ -45,7 +44,8 @@ input UpdateStoryInput {
 }
 
 type removeStoryRes {
-  id: String!
+  id: ID!
+  deleted: Boolean!
 }
 
 input GetTimedStoriesInput {
@@ -65,6 +65,6 @@ type Query {
 type Mutation {
   createStory(createStoryInput: CreateStoryInput!): Story!
   updateStory(updateStoryInput: UpdateStoryInput!): Story!
-  removeStory(id: String!): removeStoryRes!
+  removeStory(id: ID!): removeStoryRes!
   scanStory(storyId: String!): Story!
 }

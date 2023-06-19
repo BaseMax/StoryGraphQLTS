@@ -63,9 +63,10 @@ class StoryRepo {
   }
 
   public async removeStory(id: string) {
-    await this.storyModel.deleteOne({ _id: id });
+    const { deletedCount } = await this.storyModel.deleteOne({ _id: id });
     return {
       id,
+      deleted: deletedCount >= 1 ? true : false,
     };
   }
 

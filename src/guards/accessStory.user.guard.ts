@@ -40,7 +40,6 @@ export class UserAccess implements CanActivate {
     const { req } = ctx.getContext();
 
     const token = req.header("authorization").split("=")[1] as string;
-
     if (!token) throw new UnauthorizedException();
 
     try {
@@ -49,7 +48,8 @@ export class UserAccess implements CanActivate {
         isGuest?: boolean;
       };
 
-      if (pd.isGuest) throw new UnauthorizedException();
+      const { isGuest } = pd;
+      if (isGuest === undefined || isGuest) throw new UnauthorizedException();
     } catch {
       throw new UnauthorizedException();
     }
