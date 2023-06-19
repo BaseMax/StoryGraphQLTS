@@ -7,11 +7,12 @@ import userSchema, { User } from "../../models/user.model";
 import { JwtModule } from "@nestjs/jwt";
 import { GuestUser, guestUserSchema } from "../../models/guestUser.model";
 
+const JWT_SECRETKEY = "kA7//Y2MrR2Qj0bEiEhhli2436xD/sybtHYbUDVkKYJtEhR8iuWfFA";
 @Module({
   imports: [
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRETKEY,
+      secret: process.env.JWT_SECRETKEY || JWT_SECRETKEY,
       signOptions: { expiresIn: "1000s" },
     }),
     MongooseModule.forFeature([

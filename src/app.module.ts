@@ -8,11 +8,13 @@ import { StoryModule } from "./components/story/story.module";
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URL),
+    MongooseModule.forRoot(
+      process.env.MONGO_URL || "mongodb://0.0.0.0:27017/maxstory",
+    ),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
-      typePaths: ["./components/**/*.graphql"],
+      typePaths: ["src/components/**/*.graphql"],
       sortSchema: true,
       context: ({ req }) => ({ req }),
       formatError: (error: GraphQLError) => {
