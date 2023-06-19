@@ -24,7 +24,7 @@ export class StoryService {
   }
 
   public async scanStory(userId: string, storyId: string) {
-    const story = await this.scanStory(userId, storyId);
+    const story = await this.storyRepo.scanStory(userId, storyId);
     return story;
   }
 

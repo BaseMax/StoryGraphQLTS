@@ -43,8 +43,12 @@ export class StoryResolver {
 
   @UseGuards(GuestUserAccess)
   @Mutation("scanStory")
-  async scanStory(@Args("id") storyId: string, @User() user: { id: string }) {
-    return await this.storyService.scanStory(user.id, storyId);
+  async scanStory(
+    @Args("storyId") storyId: string,
+    @User() user: { id: string },
+  ) {
+    const scanedStory = await this.storyService.scanStory(user.id, storyId);
+    return scanedStory;
   }
 
   @UseGuards(UserAccess)

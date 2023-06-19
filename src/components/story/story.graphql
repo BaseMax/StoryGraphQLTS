@@ -56,6 +56,13 @@ input GetTimedStoriesInput {
   createdAt: String!
   updatedAt: String!
 }
+
+type scanStoryRes {
+  userId: String!
+  storyId: String!
+  _id: String!
+}
+
 type Query {
   getStory(storyId: String!): Story!
   getTimedStories(input: GetTimedStoriesInput!, page: Int, limit: Int): [Story]!
@@ -66,5 +73,5 @@ type Mutation {
   createStory(createStoryInput: CreateStoryInput!): Story!
   updateStory(updateStoryInput: UpdateStoryInput!): Story!
   removeStory(id: ID!): removeStoryRes!
-  scanStory(storyId: String!): Story!
+  scanStory(storyId: String!): scanStoryRes!
 }
