@@ -15,7 +15,7 @@ class Story {
     required: true,
     index: true,
   })
-  creatorId: string;
+  creatorUserId: string;
 
   @Prop({
     type: String,
@@ -86,6 +86,6 @@ class Story {
   isShareable: boolean;
 }
 
-const storyModel = SchemaFactory.createForClass(Story);
+const storySchema = SchemaFactory.createForClass(Story);
 
-export { storyModel, StoryDocument, Story };
+export { storySchema, StoryDocument, Story };

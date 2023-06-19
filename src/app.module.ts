@@ -3,6 +3,7 @@ import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from "./components/auth/auth.module";
+import { StoryModule } from "./components/story/story.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from "./components/auth/auth.module";
       context: ({ req }) => ({ req }),
     }),
     AuthModule,
+    StoryModule,
   ],
 })
 export class AppModule {}
