@@ -4,7 +4,7 @@ import { IResult } from "ua-parser-js";
 import { AuthService } from "./auth.service";
 import { LoginInput } from "./dto/login-auth.input";
 import { RegisterInput } from "./dto/register-auth.input";
-import User from "src/decorator/user.decorator";
+import User from "../../decorator/user.decorator";
 
 @Resolver("Auth")
 export class AuthResolver {
