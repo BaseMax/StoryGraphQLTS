@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model, Types } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { ScanStory } from "../../models/scanStory.model";
 import { Story } from "../../models/story.model";
 import { CreateStoryInput } from "./dto/create-story.input";
@@ -106,8 +106,6 @@ class StoryRepo {
       )
       .limit(limit)
       .skip((page - 1) * limit);
-    console.log(stories);
-
     return stories;
   }
 
@@ -132,7 +130,7 @@ class StoryRepo {
     limit = limit ? limit : 10;
     const story = await this.storyModel
       .findOne({
-        _id: sts.id,
+        _id: this.generateObjectId(sts.id),
         creatorUserId: this.generateObjectId(sts.creatorUserId),
         type: sts.type,
         storyName: sts.storyName,
@@ -141,6 +139,7 @@ class StoryRepo {
       })
       .limit(limit)
       .skip((page - 1) * limit);
+
     return story;
   }
 
@@ -161,24 +160,30 @@ class StoryRepo {
         },
       },
       {
-        $match: {
-          _id: sts.id,
-          userId: sts.creatorUserId,
-          "stories.type": sts.type,
-          "stories.storyName": sts.storyName,
-          "stories.createdAt": sts.createdAt,
-          "stories.updatedAt": sts.updatedAt,
-        },
-      },
-      {
         $limit: limit,
       },
       {
         $skip: (page - 1) * limit,
       },
+      {
+        $unwind: "$stories",
+      },
+      { $replaceRoot: { newRoot: "$stories" } },
+      {
+        $match: {
+          _id: this.generateObjectId(sts.id),
+          creatorUserId: this.generateObjectId(sts.creatorUserId),
+          type: sts.type,
+          storyName: sts.storyName,
+          createdAt: sts.createdAt,
+          updatedAt: sts.updatedAt,
+        },
+      },
     ];
 
     const story = await this.scanStoryModel.aggregate(pipeline);
+    console.log(story);
+
     return story;
   }
 

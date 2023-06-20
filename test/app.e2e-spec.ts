@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
-import { connect, Model, model, Schema } from "mongoose";
+import mongoose, { connect, Model, model, Schema, Types } from "mongoose";
 import { hashSync } from "bcrypt";
 
 describe("AppController (e2e)", () => {
@@ -24,15 +24,78 @@ describe("AppController (e2e)", () => {
     password: "default",
   };
 
+  const rootUserInfo = {
+    email: "rootUser@gmail.com",
+    password: hashSync("rootUs", 8),
+    name: "root",
+  };
+
+  const rootUserlogin = {
+    email: "rootUser@gmail.com",
+    password: "rootUs",
+  };
+
+  let rootUser;
+
   // app
   let app: INestApplication;
 
+  // storyId
+  const storyId = [];
+
+  const timedStory = [];
+
+  const seedStoryDB = async (userId: string) => {
+    for (let i = 0; i < 20; i++) {
+      const ss = await storyModel.create({
+        attachedFile: "ss",
+        backgroundColor: "dkndkvdkvn",
+        backgroundImage: "dkndkvdkvn",
+        type: "test",
+        toTime: "2023-06-19T16:13:45.687Z",
+        toDate: "2023-06-19T16:13:45.687Z",
+        storyName: "ttt",
+        isShareable: true,
+        fromTime: "2023-06-19T16:13:45.687Z",
+        fromDate: "2023-06-19T16:13:45.687Z",
+        externalWebLink: "dkndkvdkvn",
+        creatorUserId: new mongoose.Types.ObjectId(userId),
+      });
+      storyId.push(ss._id);
+      timedStory.push(ss);
+    }
+  };
+
   beforeAll(async () => {
     await connect("mongodb://0.0.0.0:27017/maxstory");
-    userModel = model("users", new Schema({}, { strict: false }));
-    guestUserModel = model("guestusers", new Schema({}, { strict: false }));
-    storyModel = model("stories", new Schema({}, { strict: false }));
-    scanstoryModel = model("scanstories", new Schema({}, { strict: false }));
+    userModel = model(
+      "users",
+      new Schema(
+        { createdAt: { type: Date }, updatedAt: { type: Date } },
+        { timestamps: { createdAt: true }, strict: false },
+      ),
+    );
+    guestUserModel = model(
+      "guestusers",
+      new Schema(
+        { createdAt: { type: Date }, updatedAt: { type: Date } },
+        { timestamps: { createdAt: true }, strict: false },
+      ),
+    );
+    storyModel = model(
+      "stories",
+      new Schema(
+        { createdAt: { type: Date }, updatedAt: { type: Date } },
+        { timestamps: { createdAt: true }, strict: false },
+      ),
+    );
+    scanstoryModel = model(
+      "scanstories",
+      new Schema(
+        { createdAt: { type: Date }, updatedAt: { type: Date } },
+        { timestamps: { createdAt: true }, strict: false },
+      ),
+    );
   });
 
   beforeEach(async () => {
@@ -44,17 +107,35 @@ describe("AppController (e2e)", () => {
     app.useGlobalPipes(new ValidationPipe({}));
 
     await app.init();
+    // await userModel.deleteMany();
 
-    await userModel.deleteMany();
-    await userModel.create(defaultUser);
+    const defaultUserExists = await userModel.findOne({
+      email: defaultLoginUser.email,
+    });
 
-    await storyModel.create();
-    await guestUserModel.deleteMany({});
+    if (!defaultUserExists) {
+      const du = await userModel.create(defaultUser);
+    }
+
+    const rootUserExists = await userModel.findOne({
+      email: rootUserInfo.email,
+    });
+
+    if (!rootUserExists) {
+      const ru = await userModel.create(rootUserInfo);
+      rootUser = ru._id;
+    }
+
+    await guestUserModel.create({});
+
+    // create stories for test;
+    await seedStoryDB(rootUser);
   });
 
   const tokens = {
     user: "",
     guestUser: "",
+    rootUser: "",
   };
 
   describe("login", () => {
@@ -87,7 +168,7 @@ describe("AppController (e2e)", () => {
       expect(body.errors.data).toBe(undefined);
     });
 
-    it("shout login successfuly", async () => {
+    it("should login successfuly", async () => {
       const { status, body } = await login(
         defaultLoginUser.email,
         defaultLoginUser.password,
@@ -95,6 +176,17 @@ describe("AppController (e2e)", () => {
 
       tokens.user = body.data.login.accessToken;
 
+      expect(status).toBe(200);
+      expect(body.data.login).toHaveProperty("accessToken");
+      expect(typeof body.data.login.accessToken).toBe("string");
+    });
+
+    it("should login successfuly for root user", async () => {
+      const { status, body } = await login(
+        rootUserlogin.email,
+        rootUserlogin.password,
+      );
+      tokens.rootUser = body.data.login.accessToken;
       expect(status).toBe(200);
       expect(body.data.login).toHaveProperty("accessToken");
       expect(typeof body.data.login.accessToken).toBe("string");
@@ -121,6 +213,8 @@ describe("AppController (e2e)", () => {
     };
 
     it("should register successfuly", async () => {
+      await userModel.deleteOne({ email: "thisistest@gmil.com" });
+
       const { email, name, password } = {
         email: "thisistest@gmil.com",
         password: "testme",
@@ -314,6 +408,172 @@ describe("AppController (e2e)", () => {
       expect(status).toBe(200);
       expect(body.data.removeStory).toHaveProperty("id");
       expect(body.data.removeStory.deleted).toBeTruthy();
+    });
+
+    it("should scan story", async () => {
+      const story = await storyModel.insertMany([{}, {}]);
+
+      const mutation = `
+      mutation scan($input: String!) {
+        scanStory(storyId: $input) {
+          _id
+          storyId
+          userId
+        }
+      }
+      `;
+
+      const input = {
+        input: story[0]._id,
+      };
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.guestUser}`)
+        .send({ query: mutation, variables: input });
+
+      expect(status).toBe(200);
+      expect(body.data.scanStory).toHaveProperty("userId");
+      expect(body.data.scanStory).toHaveProperty("_id");
+      expect(body.data.scanStory).toHaveProperty("storyId");
+    });
+
+    it("should return one story", async () => {
+      const query = `
+      query story($input: String!){
+      getStory(storyId: $input) {
+        _id
+        backgroundColor
+      }
+    }
+      `;
+      const input = {
+        input: storyId.pop(),
+      };
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.user}`)
+        .send({
+          query,
+          variables: input,
+        });
+
+      expect(status).toBe(200);
+      expect(body.data.getStory).toHaveProperty("_id");
+      expect(body.data.getStory).toHaveProperty("backgroundColor");
+    });
+
+    it("should return stories from user", async () => {
+      const query = `
+      query getStories($page: Int!, $limit: Int!){
+        getStories(page: $page, limit: $limit) {
+        _id
+        backgroundColor
+      }
+    }
+      `;
+      const input = {
+        page: 1,
+        limit: 3,
+      };
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.rootUser}`)
+        .send({
+          query,
+          variables: input,
+        });
+      expect(Array.isArray(body.data.getStories)).toBeTruthy();
+      expect([body.data.getStories].flat().length).toBe(3);
+      expect(body.data.getStories[0]).toHaveProperty("_id");
+      expect(body.data.getStories[0]).toHaveProperty("backgroundColor");
+      expect(status).toBe(200);
+    });
+
+    it("should return stories from guest", async () => {
+      const query = `
+      query getStories($page: Int!, $limit: Int!){
+        getStories(page: $page, limit: $limit) {
+        _id
+      }
+    }
+      `;
+      const input = {
+        page: 1,
+        limit: 1,
+      };
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.guestUser}`)
+        .send({
+          query,
+          variables: input,
+        });
+      expect(Array.isArray(body.data.getStories)).toBeTruthy();
+      expect([body.data.getStories].flat().length).toBe(1);
+      expect(body.data.getStories[0]).toHaveProperty("_id");
+      expect(status).toBe(200);
+    });
+
+    it("should return timed stories from user", async () => {
+      const story = timedStory.pop();
+      const query = `
+      query story {
+        getTimedStories(sts:{
+              creatorUserId: "${rootUser}"
+              id: "${story._id}"
+              type: "${story.type}"
+              storyName: "${story.storyName}"
+              createdAt: "${story.createdAt}",
+              updatedAt: "${story.updatedAt}",
+        }limit: 1, page: 1) {
+          _id
+          attachedFile
+        }
+      }
+      `;
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.user}`)
+        .send({
+          query,
+        });
+      expect(body.data.getTimedStories);
+      expect(body.data.getTimedStories);
+      expect(status).toBe(200);
+    });
+    it("should return timed stories from guest", async () => {
+      const query = `
+      query story {
+        getTimedStories(sts:{
+              creatorUserId: "6491a39937b89d8b5993540a"
+              id:"6491a39937b89d8b59935435"
+              type: "test"
+              storyName: "ttt"
+           createdAt: "2023-06-20T13:03:21.847Z",
+          updatedAt: "2023-06-20T13:03:21.847Z",
+      
+      
+        }limit: 1, page: 1) {
+          _id
+          attachedFile
+        }
+      }
+      `;
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.guestUser}`)
+        .send({
+          query,
+        });
+      expect(body.data.getTimedStories).toHaveProperty("_id");
+      expect(body.data.getTimedStories).toHaveProperty("attachedFile");
+      expect(status).toBe(200);
     });
   });
 });

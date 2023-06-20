@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 
 type StoryDocument = HydratedDocument<Story>;
 
@@ -11,11 +11,23 @@ type StoryDocument = HydratedDocument<Story>;
 })
 class Story {
   @Prop({
-    type: String,
+    type: Date,
     required: true,
     index: true,
   })
-  creatorUserId: string;
+  createdAt: Date;
+  @Prop({
+    type: Date,
+    required: true,
+    index: true,
+  })
+  updatedAt: Date;
+  @Prop({
+    type: Types.ObjectId,
+    required: true,
+    index: true,
+  })
+  creatorUserId: Types.ObjectId;
 
   @Prop({
     type: String,

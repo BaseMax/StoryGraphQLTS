@@ -59,15 +59,23 @@ export class StoryResolver {
 
   @Query("getTimedStories")
   async getTimedStories(
-    @Args("GetTimedStoriesInput") sts: GetTimedStoriesInput,
+    @Args("sts") getTimedStoriesInput: GetTimedStoriesInput,
     @Args("limit") limit: number,
     @Args("page") page: number,
     @User() user: { id: string; isGuest?: boolean },
   ) {
     if (!user.isGuest)
-      return await this.storyService.getTimedStories(sts, page, limit);
+      return await this.storyService.getTimedStories(
+        getTimedStoriesInput,
+        page,
+        limit,
+      );
 
-    return await this.storyService.getGuestTimedStories(sts, page, limit);
+    return await this.storyService.getGuestTimedStories(
+      getTimedStoriesInput,
+      page,
+      limit,
+    );
   }
 
   @Query("getStories")

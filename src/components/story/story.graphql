@@ -65,8 +65,8 @@ type scanStoryRes {
 
 type Query {
   getStory(storyId: String!): Story
-  getTimedStories(input: GetTimedStoriesInput!, page: Int, limit: Int): [Story]
   getStories(page: Int!, limit: Int!): [Story]
+  getTimedStories(sts: GetTimedStoriesInput!, page: Int!, limit: Int!): Story
 }
 
 type Mutation {
