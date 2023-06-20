@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { ScanStory } from "../../models/scanStory.model";
 import { Story } from "../../models/story.model";
 import { CreateStoryInput } from "./dto/create-story.input";
@@ -15,7 +15,13 @@ class StoryRepo {
     private readonly scanStoryModel: Model<ScanStory>,
   ) {}
 
+  private generateObjectId(i: any) {
+    return new mongoose.Types.ObjectId(i);
+  }
+
   public async createStory(s: CreateStoryInput) {
+    s["creatorUserId"] = this.generateObjectId(s.creatorUserId);
+
     const story = await this.storyModel.create(s);
     return {
       creatorUserId: story.creatorUserId,
@@ -44,6 +50,8 @@ class StoryRepo {
         returnOriginal: false,
       },
     );
+
+    if (!story) return {};
 
     return {
       creatorUserId: story.creatorUserId,
@@ -83,10 +91,12 @@ class StoryRepo {
     return story;
   }
 
-  public async find(page: number, limit: number) {
+  public async find(userId: string, page: number, limit: number) {
     const stories = await this.storyModel
       .find(
-        {},
+        {
+          creatorUserId: this.generateObjectId(userId),
+        },
         {},
         {
           projection: {
@@ -96,12 +106,16 @@ class StoryRepo {
       )
       .limit(limit)
       .skip((page - 1) * limit);
+    console.log(stories);
 
     return stories;
   }
 
   public async scanStory(userId: string, storyId: string) {
-    const scanstory = await this.scanStoryModel.create({ storyId, userId });
+    const scanstory = await this.scanStoryModel.create({
+      storyId: this.generateObjectId(storyId),
+      userId: this.generateObjectId(userId),
+    });
     return {
       userId,
       storyId,
@@ -119,7 +133,7 @@ class StoryRepo {
     const story = await this.storyModel
       .findOne({
         _id: sts.id,
-        creatorUserId: sts.creatorUserId,
+        creatorUserId: this.generateObjectId(sts.creatorUserId),
         type: sts.type,
         storyName: sts.storyName,
         createdAt: sts.createdAt,
@@ -173,16 +187,38 @@ class StoryRepo {
     page: number,
     limit: number,
   ) {
-    return await this.scanStoryModel
-      .find(
-        { userId },
-        {},
-        {
-          populate: { path: "storyId" },
+    const pipeline = [
+      {
+        $lookup: {
+          from: "stories",
+          localField: "storyId",
+          foreignField: "_id",
+          as: "scanstories",
         },
-      )
-      .skip((page - 1) * limit)
-      .limit(limit);
+      },
+      {
+        $match: {
+          userId: this.generateObjectId(userId),
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $project: {
+          scanstories: 1,
+          _id: 0,
+        },
+      },
+      {
+        $unwind: "$scanstories",
+      },
+      { $replaceRoot: { newRoot: "$scanstories" } },
+    ];
+    return await this.scanStoryModel.aggregate(pipeline);
   }
 }
 

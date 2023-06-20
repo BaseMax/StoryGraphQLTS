@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
-import { connect, isValidObjectId, Model, model, Schema } from "mongoose";
+import { connect, Model, model, Schema } from "mongoose";
 import { hashSync } from "bcrypt";
 
 describe("AppController (e2e)", () => {
@@ -45,15 +45,17 @@ describe("AppController (e2e)", () => {
 
     await app.init();
 
-    await userModel.deleteMany({});
+    await userModel.deleteMany();
     await userModel.create(defaultUser);
 
+    await storyModel.create();
     await guestUserModel.deleteMany({});
-
-    await storyModel.deleteMany({});
-
-    await scanstoryModel.deleteMany({});
   });
+
+  const tokens = {
+    user: "",
+    guestUser: "",
+  };
 
   describe("login", () => {
     const login = (email: string, password: string) => {
@@ -90,6 +92,9 @@ describe("AppController (e2e)", () => {
         defaultLoginUser.email,
         defaultLoginUser.password,
       );
+
+      tokens.user = body.data.login.accessToken;
+
       expect(status).toBe(200);
       expect(body.data.login).toHaveProperty("accessToken");
       expect(typeof body.data.login.accessToken).toBe("string");
@@ -187,15 +192,13 @@ describe("AppController (e2e)", () => {
       const { status, body } = await getGuestToken();
 
       token = body.data.getGuestToken.accessToken;
-
+      tokens.guestUser = body.data.getGuestToken.accessToken;
       expect(status).toBe(200);
       expect(typeof body.data.getGuestToken.accessToken).toBe("string");
     });
 
     it("should return valid token status", async () => {
       const { status, body } = await validateGuestToken(token);
-      console.log(body);
-
       expect(status).toBe(200);
       expect(body.data.isvalidGuestToken.isvalid).toBeTruthy();
     });
@@ -204,6 +207,113 @@ describe("AppController (e2e)", () => {
       const { status, body } = await validateGuestToken("kdjvndv");
       expect(status).toBe(200);
       expect(body.data.isvalidGuestToken.isvalid).toBeFalsy();
+    });
+  });
+
+  describe("story", () => {
+    it("should create story", async () => {
+      const mutation = `
+      mutation story {
+        createStory(createStoryInput: {
+          attachedFile: "ss"
+          backgroundColor: "dkndkvdkvn"
+          backgroundImage: "dkndkvdkvn"
+          type: "test"
+          toTime: "2023-06-19T16:13:45.687Z"
+          toDate: "2023-06-19T16:13:45.687Z"
+          storyName: "ttt"
+          isShareable: true
+          fromTime: "2023-06-19T16:13:45.687Z"
+          fromDate: "2023-06-19T16:13:45.687Z"
+          externalWebLink: "dkndkvdkvn"
+        }) {
+          attachedFile
+          backgroundColor
+          backgroundImage
+          creatorUserId
+          type
+          toTime
+          toDate
+          storyName
+          isShareable
+          fromTime
+          fromDate
+          externalWebLink
+          creatorUserId
+          _id
+        }
+      }
+      `;
+
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.user}`)
+        .send({ query: mutation });
+      expect(status).toBe(200);
+      expect(body.data.createStory).toHaveProperty("_id");
+    });
+
+    it("should update story", async () => {
+      const s = await storyModel.create({});
+      const mutation = `
+      mutation story {
+        updateStory(updateStoryInput: {
+          storyId: "${s._id}"
+          attachedFile: "ss"
+          backgroundColor: "dkndkvdkvn"
+          backgroundImage: "dkndkvdkvn"
+          type: "test"
+          toTime: "2023-06-19T16:13:45.687Z"
+          toDate: "2023-06-19T16:13:45.687Z"
+          storyName: "ttt"
+          isShareable: false
+          fromTime: "2023-06-19T16:13:45.687Z"
+          fromDate: "2023-06-19T16:13:45.687Z"
+          externalWebLink: "dkndkvdkvn"
+        }) {
+          attachedFile
+          backgroundColor
+          backgroundImage
+          creatorUserId
+          type
+          toTime
+          toDate
+          storyName
+          isShareable
+          fromTime
+          fromDate
+          externalWebLink
+          creatorUserId
+          _id
+        }
+      }
+      `;
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.user}`)
+        .send({ query: mutation });
+      expect(status).toBe(200);
+      expect(body.data.updateStory).toHaveProperty("_id");
+    });
+
+    it("should delete story", async () => {
+      const s = await storyModel.create({});
+
+      const mutation = `
+      mutation story {
+        removeStory(id: "${s._id}"){
+          id
+          deleted
+        }
+      }
+      `;
+      const { status, body } = await request(app.getHttpServer())
+        .post("/graphql")
+        .set("Authorization", `accessToken=${tokens.user}`)
+        .send({ query: mutation });
+      expect(status).toBe(200);
+      expect(body.data.removeStory).toHaveProperty("id");
+      expect(body.data.removeStory.deleted).toBeTruthy();
     });
   });
 });

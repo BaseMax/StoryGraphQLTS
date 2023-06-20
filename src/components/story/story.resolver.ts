@@ -76,7 +76,8 @@ export class StoryResolver {
     @Args("page") page: number,
     @User() user: { id: string; isGuest?: boolean },
   ) {
-    if (!user.isGuest) return await this.storyService.getStories(page, limit);
+    if (!user.isGuest)
+      return await this.storyService.getStories(user.id, page, limit);
 
     return await this.storyService.getGuestScanedStories(user.id, page, limit);
   }

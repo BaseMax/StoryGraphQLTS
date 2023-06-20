@@ -43,6 +43,7 @@ export class UserAccess implements CanActivate {
     if (!token) throw new UnauthorizedException();
 
     try {
+      this.jwtService.verify(token);
       const pd = this.jwtService.decode(token) as {
         id: string;
         isGuest?: boolean;

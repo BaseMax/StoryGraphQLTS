@@ -1,5 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsBoolean, IsDateString, IsString } from "class-validator";
+import { Types } from "mongoose";
 
 @InputType()
 export class CreateStoryInput {
@@ -36,4 +37,6 @@ export class CreateStoryInput {
   @Field()
   @IsString()
   externalWebLink: string;
+
+  creatorUserId: any;
 }
