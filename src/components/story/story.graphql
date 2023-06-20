@@ -1,0 +1,77 @@
+type Story {
+  creatorUserId: String
+  type: String 
+  fromDate: String
+  fromTime: String
+  toDate: String
+  toTime: String
+  storyName: String 
+  backgroundColor: String 
+  backgroundImage: String 
+  isShareable: Boolean
+  attachedFile: String 
+  externalWebLink: String 
+  _id: ID
+}
+
+input CreateStoryInput {
+  type: String!
+  fromDate: String!
+  fromTime: String!
+  toDate: String!
+  toTime: String!
+  storyName: String!
+  backgroundColor: String! 
+  backgroundImage: String!
+  isShareable: Boolean!
+  attachedFile: String!
+  externalWebLink: String!
+}
+
+input UpdateStoryInput {
+  storyId: ID!
+  type: String!
+  fromDate: String!
+  fromTime: String!
+  toDate: String!
+  toTime: String!
+  storyName: String!
+  backgroundColor: String! 
+  backgroundImage: String!
+  isShareable: Boolean!
+  attachedFile: String!
+  externalWebLink: String!
+}
+
+type removeStoryRes {
+  id: ID!
+  deleted: Boolean!
+}
+
+input GetTimedStoriesInput {
+  id: String!
+  creatorUserId: String!
+  type: String!
+  storyName: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type scanStoryRes {
+  userId: String!
+  storyId: String!
+  _id: String!
+}
+
+type Query {
+  getStory(storyId: String!): Story
+  getStories(page: Int!, limit: Int!): [Story]
+  getTimedStories(sts: GetTimedStoriesInput!, page: Int!, limit: Int!): Story
+}
+
+type Mutation {
+  createStory(createStoryInput: CreateStoryInput!): Story!
+  updateStory(updateStoryInput: UpdateStoryInput!): Story!
+  removeStory(id: ID!): removeStoryRes!
+  scanStory(storyId: String!): scanStoryRes!
+}

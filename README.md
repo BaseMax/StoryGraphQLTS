@@ -245,8 +245,6 @@ Allows users to authenticate and obtain a user token.
 ```graphql
 query {
   login(email: "example@example.com", password: "password123") {
-    email
-    password (HASH)
     token
   }
 }
@@ -258,8 +256,6 @@ query {
 {
   "data": {
     "login": {
-      "email": "<email>",
-      "password": "<email>",
       "token": "<user_token>"
     }
   }
@@ -275,7 +271,6 @@ Returns a UUID token for guest users.
 ```graphql
 query {
   getGuestToken {
-    userAgent
     token
   }
 }
@@ -287,7 +282,6 @@ query {
 {
   "data": {
     "getGuestToken": {
-      "userAgent": "<agent>",
       "token": "<guest_token>"
     }
   }

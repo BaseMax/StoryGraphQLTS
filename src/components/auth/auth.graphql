@@ -1,0 +1,45 @@
+type loginRes {
+  accessToken: String
+  message: String!
+}
+
+type registerRes {
+  id: ID
+  name: String
+  email: String
+  created: Boolean!
+  message: String!
+}
+
+type getGuestTokenRes {
+  accessToken: String!
+}
+
+type isvalidGuestTokenRes {
+  isvalid: Boolean!
+}
+
+input loginInput {
+  email: String
+  password: String
+}
+
+type Query {
+    getGuestToken: getGuestTokenRes!
+}
+
+input registerInput {
+  name: String
+  email: String
+  password: String
+}
+
+type DeleteAccountRes {
+  deleted: Boolean!
+}
+type Mutation {
+  deleteAccount: DeleteAccountRes!
+  login(loginInput: loginInput!): loginRes!
+  register(registerInput: registerInput!): registerRes!
+  isvalidGuestToken(token: String!): isvalidGuestTokenRes!
+}
