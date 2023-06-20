@@ -4,6 +4,7 @@ import { IResult } from "ua-parser-js";
 import { AuthService } from "./auth.service";
 import { LoginInput } from "./dto/login-auth.input";
 import { RegisterInput } from "./dto/register-auth.input";
+import User from "src/decorator/user.decorator";
 
 @Resolver("Auth")
 export class AuthResolver {
@@ -28,22 +29,9 @@ export class AuthResolver {
   async register(@Args("registerInput") registerInput: RegisterInput) {
     return await this.authService.register(registerInput);
   }
-}
 
-/*
- 
-  register(registerInput: {
-    name: "mahdi"
-    email: "yasermahdiazizzadeh@gmail.com"
-    password: "azizzadeh"
-  }) {
-    id
-    message
-    created
-    name
+  @Mutation("deleteAccount")
+  async deleteAccount(@User() user: { id: string; isGuest?: boolean }) {
+    return await this.authService.deleteAccount(user);
   }
-  
-  guestToken {
-    accessToken
-  }
-*/
+}

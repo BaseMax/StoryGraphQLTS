@@ -34,7 +34,11 @@ input registerInput {
   password: String
 }
 
+type DeleteAccountRes {
+  deleted: Boolean!
+}
 type Mutation {
+  deleteAccount: DeleteAccountRes!
   login(loginInput: loginInput!): loginRes!
   register(registerInput: registerInput!): registerRes!
   isvalidGuestToken(token: String!): isvalidGuestTokenRes!

@@ -96,4 +96,8 @@ export class AuthService {
         };
       });
   }
+
+  public async deleteAccount(user: { id: string; isGuest?: boolean }) {
+    return await this.authRepo.deleteUser(user.id, user.isGuest);
+  }
 }

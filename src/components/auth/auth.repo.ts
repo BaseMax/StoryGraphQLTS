@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { GuestUser } from "../../models/guestUser.model";
 import { IResult } from "ua-parser-js";
 import { IuserSchema, User } from "../../models/user.model";
@@ -30,6 +30,23 @@ class AuthRepo {
   public async createGuestUser(cInformation: IResult) {
     const guestUser = await this.guestUserModel.create(cInformation);
     return guestUser;
+  }
+
+  public async deleteUser(userId: string, isGuest: boolean) {
+    if (isGuest) {
+      const { deletedCount } = await this.guestUserModel.deleteOne({
+        _id: new mongoose.Types.ObjectId(userId),
+      });
+      return {
+        deleted: deletedCount >= 1 ? true : false,
+      };
+    }
+    const { deletedCount } = await this.userModel.deleteOne({
+      _id: new mongoose.Types.ObjectId(userId),
+    });
+    return {
+      deleted: deletedCount >= 1 ? true : false,
+    };
   }
 }
 
