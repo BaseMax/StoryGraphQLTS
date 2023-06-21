@@ -10,12 +10,14 @@ import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class GuestUserAccess implements CanActivate {
   constructor(private jwtService: JwtService) {}
+
   async canActivate(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
 
-    const token = req.header("authorization").split("=")[1] as string;
+    if (!req.header("authorization")) throw new UnauthorizedException();
 
+    const token = req.header("authorization").split("=")[1] as string;
     if (!token) throw new UnauthorizedException();
 
     try {
@@ -39,6 +41,8 @@ export class UserAccess implements CanActivate {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
 
+    if (!req.header("authorization")) throw new UnauthorizedException();
+
     const token = req.header("authorization").split("=")[1] as string;
     if (!token) throw new UnauthorizedException();
 
@@ -51,6 +55,27 @@ export class UserAccess implements CanActivate {
 
       const { isGuest } = pd;
       if (isGuest === undefined || isGuest) throw new UnauthorizedException();
+    } catch {
+      throw new UnauthorizedException();
+    }
+    return true;
+  }
+}
+
+@Injectable()
+export class AllAccess implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+  async canActivate(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    const { req } = ctx.getContext();
+
+    if (!req.header("authorization")) throw new UnauthorizedException();
+
+    const token = req.header("authorization").split("=")[1] as string;
+    if (!token) throw new UnauthorizedException();
+
+    try {
+      this.jwtService.verify(token);
     } catch {
       throw new UnauthorizedException();
     }

@@ -1,3 +1,4 @@
+# Reponses
 type loginRes {
   accessToken: String
   message: String!
@@ -19,13 +20,14 @@ type isvalidGuestTokenRes {
   isvalid: Boolean!
 }
 
+type DeleteAccountRes {
+  deleted: Boolean!
+}
+
+# inputs
 input loginInput {
   email: String
   password: String
-}
-
-type Query {
-    getGuestToken: getGuestTokenRes!
 }
 
 input registerInput {
@@ -34,12 +36,16 @@ input registerInput {
   password: String
 }
 
-type DeleteAccountRes {
-  deleted: Boolean!
+# query
+type Query {
+    getGuestToken: getGuestTokenRes!
 }
+
+# mutation
 type Mutation {
   deleteAccount: DeleteAccountRes!
   login(loginInput: loginInput!): loginRes!
   register(registerInput: registerInput!): registerRes!
   isvalidGuestToken(token: String!): isvalidGuestTokenRes!
 }
+

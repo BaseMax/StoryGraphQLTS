@@ -5,6 +5,7 @@ import { RegisterInput } from "./dto/register-auth.input";
 import { LoginInput } from "./dto/login-auth.input";
 import { JwtService } from "@nestjs/jwt";
 import { IResult } from "ua-parser-js";
+import Iuser from "../interface/user.interface";
 
 @Injectable()
 export class AuthService {
@@ -79,22 +80,16 @@ export class AuthService {
   }
 
   public isvalidToken(t: string) {
-    return this.jwtService
-      .verifyAsync(t)
-      .then((decode) =>
-        !decode.isGuest
-          ? {
-              isvalid: false,
-            }
-          : {
-              isvalid: true,
-            },
-      )
-      .catch(() => {
-        return {
-          isvalid: false,
-        };
-      });
+    try {
+      this.jwtService.verify(t) as Iuser;
+      return {
+        isvalid: true,
+      };
+    } catch {
+      return {
+        isvalid: false,
+      };
+    }
   }
 
   public async deleteAccount(user: { id: string; isGuest?: boolean }) {
