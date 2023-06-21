@@ -5,7 +5,7 @@ import { AuthService } from "./auth.service";
 import { LoginInput } from "./dto/login-auth.input";
 import { RegisterInput } from "./dto/register-auth.input";
 import User from "../../decorator/user.decorator";
-import Iuser from "../interface/user.interface";
+import Iuser from "../../interface/user.interface";
 import {
   AllAccess,
   GuestUserAccess,

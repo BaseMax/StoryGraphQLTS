@@ -5,7 +5,7 @@ import { RegisterInput } from "./dto/register-auth.input";
 import { LoginInput } from "./dto/login-auth.input";
 import { JwtService } from "@nestjs/jwt";
 import { IResult } from "ua-parser-js";
-import Iuser from "../interface/user.interface";
+import Iuser from "../../interface/user.interface";
 
 @Injectable()
 export class AuthService {
