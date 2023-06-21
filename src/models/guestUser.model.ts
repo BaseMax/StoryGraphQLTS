@@ -1,13 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import type {
-  IBrowser,
-  ICPU,
-  IDevice,
-  IEngine,
-  IOS,
-  IResult,
-} from "ua-parser-js";
+import type { IBrowser, ICPU, IDevice, IEngine, IOS } from "ua-parser-js";
 
 type GuestUserDocument = HydratedDocument<GuestUser>;
 

@@ -11,18 +11,6 @@ type StoryDocument = HydratedDocument<Story>;
 })
 class Story {
   @Prop({
-    type: Date,
-    required: true,
-    index: true,
-  })
-  createdAt: Date;
-  @Prop({
-    type: Date,
-    required: true,
-    index: true,
-  })
-  updatedAt: Date;
-  @Prop({
     type: Types.ObjectId,
     required: true,
     index: true,

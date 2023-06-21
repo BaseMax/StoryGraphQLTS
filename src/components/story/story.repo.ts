@@ -20,9 +20,10 @@ class StoryRepo {
   }
 
   public async createStory(s: CreateStoryInput) {
-    s["creatorUserId"] = this.generateObjectId(s.creatorUserId);
+    s["creatorUserId"] = this.generateObjectId(s.creatorUserId) as any;
 
     const story = await this.storyModel.create(s);
+
     return {
       creatorUserId: story.creatorUserId,
       type: story.type,
@@ -78,7 +79,7 @@ class StoryRepo {
     };
   }
 
-  public async findOneWithId(id: string) {
+  public async findOneStoryWithId(id: string) {
     const story = await this.storyModel.findOne(
       { _id: id },
       {},
@@ -121,7 +122,7 @@ class StoryRepo {
     };
   }
 
-  public async findOneWithQuery(
+  public async findStoriesWithQuery(
     sts: GetTimedStoriesInput,
     limit?: number,
     page?: number,
@@ -182,8 +183,6 @@ class StoryRepo {
     ];
 
     const story = await this.scanStoryModel.aggregate(pipeline);
-    console.log(story);
-
     return story;
   }
 
