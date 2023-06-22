@@ -1,3 +1,7 @@
+import { config } from "dotenv";
+import { resolve } from "path";
+config({ path: resolve(__dirname, "../.env") });
+
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
@@ -8,21 +12,19 @@ import { StoryModule } from "./components/story/story.module";
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      process.env.MONGO_URL || "mongodb://0.0.0.0:27017/maxstory",
-    ),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
       typePaths: ["src/components/**/*.graphql"],
       sortSchema: true,
       context: ({ req }) => ({ req }),
-      // formatError: (error: GraphQLError) => {
-      //   const graphQLFormattedError: GraphQLFormattedError = {
-      //     errors: error.extensions.originalError,
-      //   } as any;
-      //   return graphQLFormattedError;
-      // },
+      formatError: (error: GraphQLError) => {
+        const graphQLFormattedError: GraphQLFormattedError = {
+          errors: error.extensions.originalError,
+        } as any;
+        return graphQLFormattedError;
+      },
     }),
     AuthModule,
     StoryModule,

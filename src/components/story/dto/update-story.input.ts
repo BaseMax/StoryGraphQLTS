@@ -6,6 +6,6 @@ import { IsString } from "class-validator";
 @InputType()
 export class UpdateStoryInput extends PartialType(CreateStoryInput) {
   @Field()
-  @IsString()
+  @IsString({ message: "please send storyId" })
   storyId: string;
 }

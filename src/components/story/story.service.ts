@@ -29,7 +29,7 @@ export class StoryService {
   }
 
   public async getStory(storyId: string) {
-    const story = await this.storyRepo.findOneWithId(storyId);
+    const story = await this.storyRepo.findOneStoryWithId(storyId);
     return story;
   }
 
@@ -38,7 +38,7 @@ export class StoryService {
     page: number,
     limit: number,
   ) {
-    const story = await this.storyRepo.findOneWithQuery(sts, page, limit);
+    const story = await this.storyRepo.findStoriesWithQuery(sts, page, limit);
     return story;
   }
 

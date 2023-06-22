@@ -13,6 +13,10 @@ class AuthRepo {
     private readonly guestUserModel: Model<GuestUser>,
   ) {}
 
+  private generateMongoId(id: string) {
+    return new mongoose.Types.ObjectId(id);
+  }
+
   public async create(user: IuserSchema) {
     const { _id, email, name } = await this.userModel.create(user);
     return {
@@ -33,16 +37,10 @@ class AuthRepo {
   }
 
   public async deleteUser(userId: string, isGuest: boolean) {
-    if (isGuest) {
-      const { deletedCount } = await this.guestUserModel.deleteOne({
-        _id: new mongoose.Types.ObjectId(userId),
-      });
-      return {
-        deleted: deletedCount >= 1 ? true : false,
-      };
-    }
-    const { deletedCount } = await this.userModel.deleteOne({
-      _id: new mongoose.Types.ObjectId(userId),
+    const modelName = (isGuest ? "guestUserModel" : "userModel") as any;
+
+    const { deletedCount } = await this[modelName].deleteOne({
+      _id: this.generateMongoId(userId),
     });
     return {
       deleted: deletedCount >= 1 ? true : false,

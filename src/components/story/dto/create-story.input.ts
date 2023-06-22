@@ -1,42 +1,51 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsBoolean, IsDateString, IsString } from "class-validator";
-import { Types } from "mongoose";
 
 @InputType()
 export class CreateStoryInput {
   @Field()
-  @IsString()
+  @IsString({ message: "please send attachedFile" })
   attachedFile: string;
+
   @Field()
-  @IsString()
+  @IsString({ message: "please send backgroundColor" })
   backgroundColor: string;
+
   @Field()
-  @IsString()
+  @IsString({ message: "please send backgroundImage" })
   backgroundImage: string;
+
   @Field()
-  @IsString()
+  @IsString({ message: "please send type" })
   type: string;
+
   @Field()
   @IsDateString()
   toTime: string;
+
   @Field()
   @IsDateString()
   toDate: string;
+
   @Field()
-  @IsString()
+  @IsString({ message: "please send storyName" })
   storyName: string;
+
   @Field()
-  @IsBoolean()
+  @IsBoolean({ message: "please send isShareable" })
   isShareable: string;
+
   @Field()
   @IsDateString()
   fromTime: string;
+
   @Field()
   @IsDateString()
   fromDate: string;
+
   @Field()
-  @IsString()
+  @IsString({ message: "please send externalWebLink" })
   externalWebLink: string;
 
-  creatorUserId: any;
+  creatorUserId: string;
 }
